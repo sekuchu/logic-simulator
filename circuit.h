@@ -16,4 +16,7 @@ void circuit_destroy(Circuit* circuit);
 int circuit_add_gate(Circuit* circuit, Gate* gate);
 Gate* circuit_gate_at(const Circuit* circuit, size_t index);
 
+int circuit_connect(OutputPin* output, InputPin* input);
+void circuit_disconnect(InputPin* input);
+
 #endif

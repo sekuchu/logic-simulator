@@ -77,3 +77,13 @@ Gate* circuit_gate_at(const Circuit* circuit, size_t index)
 
     return circuit->gates[index];
 }
+
+int circuit_connect(OutputPin* output, InputPin* input)
+{
+    return pin_input_connect(input, output);
+}
+
+void circuit_disconnect(InputPin* input)
+{
+    pin_input_disconnect(input);
+}
