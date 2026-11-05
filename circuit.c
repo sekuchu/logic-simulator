@@ -87,3 +87,33 @@ void circuit_disconnect(InputPin* input)
 {
     pin_input_disconnect(input);
 }
+
+void circuit_tick(Circuit* circuit)
+{
+    size_t gate_index = 0;
+    size_t output_index = 0;
+
+    if (circuit == NULL) {
+        return;
+    }
+
+    for (gate_index = 0; gate_index < circuit->gate_count; gate_index++) {
+        Gate* gate = circuit->gates[gate_index];
+
+        if (gate != NULL && gate->evaluate != NULL) {
+            gate->evaluate(gate);
+        }
+    }
+
+    for (gate_index = 0; gate_index < circuit->gate_count; gate_index++) {
+        Gate* gate = circuit->gates[gate_index];
+
+        if (gate == NULL) {
+            continue;
+        }
+
+        for (output_index = 0; output_index < gate->output_count; output_index++) {
+            pin_output_commit(&gate->outputs[output_index]);
+        }
+    }
+}

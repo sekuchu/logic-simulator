@@ -18,5 +18,6 @@ Gate* circuit_gate_at(const Circuit* circuit, size_t index);
 
 int circuit_connect(OutputPin* output, InputPin* input);
 void circuit_disconnect(InputPin* input);
+void circuit_tick(Circuit* circuit);
 
 #endif
