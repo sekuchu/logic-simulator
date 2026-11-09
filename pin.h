@@ -38,6 +38,7 @@ SignalState pin_read(const InputPin* pin);
 
 int pin_output_attach(OutputPin* pin, InputPin* subscriber);
 void pin_output_detach(OutputPin* pin, InputPin* subscriber);
+void pin_output_detach_all(OutputPin* pin);
 void pin_output_release(OutputPin* pin);
 
 int pin_input_connect(InputPin* pin, OutputPin* source);

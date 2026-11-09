@@ -151,12 +151,32 @@ void pin_output_detach(OutputPin* pin, InputPin* subscriber)
     }
 }
 
+void pin_output_detach_all(OutputPin* pin)
+{
+    size_t index = 0;
+
+    if (pin == NULL) {
+        return;
+    }
+
+    for (index = 0; index < pin->subscriber_count; index++) {
+        InputPin* subscriber = pin->subscribers[index];
+
+        if (subscriber != NULL && subscriber->source_pin == pin) {
+            subscriber->source_pin = &DEFAULT_OFF;
+        }
+    }
+
+    pin->subscriber_count = 0;
+}
+
 void pin_output_release(OutputPin* pin)
 {
     if (pin == NULL) {
         return;
     }
 
+    pin_output_detach_all(pin);
     free(pin->subscribers);
     pin->subscribers = NULL;
     pin->subscriber_count = 0;

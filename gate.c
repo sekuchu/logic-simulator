@@ -255,6 +255,7 @@ void gate_destroy(Gate* gate)
     }
 
     for (index = 0; index < gate->output_count; index++) {
+        pin_output_detach_all(&gate->outputs[index]);
         pin_output_release(&gate->outputs[index]);
     }
 
