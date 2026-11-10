@@ -1,37 +1,47 @@
 # logic-simulator
 
-Discrete digital logic simulator written in C11.
+**A small digital circuit simulator, written in C11.**
 
-## Build
+Gates are independent objects. Pins carry signals. Circuits connect them and advance their state one tick at a time.
 
+No graphical interface or visual editor. Just the logic, the wiring, and what happens when the circuit runs.
+
+### Getting it running
+
+```bash
 make
-
-## Run
-
 make run
+```
 
-## Layout
+### What's inside
 
-- `pin.h`, `pin.c`: signal states, input pins, output pins, default off source
-- `gate.h`, `gate.c`: gate types, factory functions, evaluation callbacks
-- `circuit.h`, `circuit.c`: gate container, wiring, two phase tick engine
-- `main.c`: AND into NOT cascade demo
-- `Makefile`: build, clean, run targets
+| File | Purpose |
+|---|---|
+| `pin.h / pin.c` | Signal states, input and output pins, default OFF source |
+| `gate.h / gate.c` | Gate definitions, factory functions and evaluation callbacks |
+| `circuit.h / circuit.c` | Gate storage, connections and tick execution |
+| `main.c` | AND → NOT circuit demonstration |
+| `Makefile` | Build, run and clean |
 
-## Model
+### The interesting part: time
 
-Every gate is allocated separately on the heap. The circuit stores an array of
-`Gate*` pointers, so growing the container does not move gate instances.
+The simulator doesn't evaluate everything and immediately overwrite its current state.
 
-Each tick runs in two phases. Evaluation reads input front buffers and writes
-output back buffers. Commit copies every output back buffer into its front
-buffer for the next tick.
+Each tick is split into two stages:
 
-Unconnected inputs point at the default off pin. Disconnecting an input also
-removes it from the source output subscriber list.
+1. **Evaluate:** Gates read their inputs from front buffers and write their results into back buffers.
+2. **Commit:** All output back buffers become the new front buffers.
 
-## Demo
+This means a gate cannot see another gate's newly calculated output during the same tick. Changes propagate through the circuit over successive ticks.
 
-The driver toggles two inputs through an AND gate wired into a NOT gate. The
-NOT output changes one tick after the AND output, which shows the staged
-evaluation and commit behavior.
+Every gate also lives in its own heap allocation. The circuit keeps an array of `Gate*` pointers, allowing the container to grow without relocating existing gate instances.
+
+Unconnected inputs receive a default OFF signal. Disconnecting an input also removes its subscription from the source output, keeping the wiring relationships consistent.
+
+### See it in action
+
+The included demonstration connects two inputs to an AND gate, then routes its output into a NOT gate.
+
+The driver changes the input signals and advances the circuit. The AND gate reacts first. The NOT gate follows one tick later.
+
+A small example, but it demonstrates the central idea behind the simulator: **logic has state, and state advances in steps.**
