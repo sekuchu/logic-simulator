@@ -2,13 +2,18 @@
 
 #include "circuit.h"
 
+static void print_header(void)
+{
+    printf("%-6s %-8s %-8s %-8s %-8s\n", "tick", "A", "B", "AND", "NOT");
+}
+
 static void report_state(size_t tick,
                          const OutputPin* input_a,
                          const OutputPin* input_b,
                          const Gate* and_gate,
                          const Gate* not_gate)
 {
-    printf("t=%zu A=%s B=%s and=%s not=%s\n",
+    printf("%-6zu %-8s %-8s %-8s %-8s\n",
            tick,
            signal_state_name(input_a->front_buffer),
            signal_state_name(input_b->front_buffer),
@@ -57,6 +62,7 @@ int main(void)
         goto cleanup;
     }
 
+    print_header();
     circuit_tick(&circuit);
     report_state(0, &input_a, &input_b, and_gate, not_gate);
 

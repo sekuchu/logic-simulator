@@ -1,24 +1,26 @@
 CC = gcc
-CFLAGS = -std=c11 -Wall -Wextra -O2
-TARGET = logic-sim
-OBJS = main.o circuit.o gate.o pin.o
+CFLAGS ?= -std=c11 -Wall -Wextra -Wpedantic -O2
+EXEEXT :=
+ifeq ($(OS),Windows_NT)
+EXEEXT := .exe
+endif
+TARGET := logic-sim$(EXEEXT)
+SRCS := main.c circuit.c gate.c pin.c
+OBJS := $(SRCS:.c=.o)
+HEADERS := circuit.h gate.h pin.h
+
+.PHONY: all clean run
 
 all: $(TARGET)
 
 $(TARGET): $(OBJS)
-	$(CC) $(OBJS) -o $(TARGET)
+	$(CC) $(CFLAGS) $(OBJS) -o $@
 
-main.o: main.c
-	$(CC) $(CFLAGS) -c main.c
-
-circuit.o: circuit.c
-	$(CC) $(CFLAGS) -c circuit.c
-
-gate.o: gate.c
-	$(CC) $(CFLAGS) -c gate.c
-
-pin.o: pin.c
-	$(CC) $(CFLAGS) -c pin.c
+%.o: %.c $(HEADERS)
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
 	rm -f $(OBJS) $(TARGET)
+
+run: $(TARGET)
+	./$(TARGET)
